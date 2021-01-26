@@ -29,15 +29,14 @@ public class CustomerMenu implements MenuInterface{
 		System.out.println("For a list of Commands: Type H");
 
 			input = in.nextLine();
-			checkOptions(input);}}
-		
-	
+			checkOptions(input);}
+		}
+			
 	//Check options(works as intended)
 	public void checkOptions(String input) {
 		input=input.toUpperCase();
 		switch( input) {
 		case "1":
-			viewAccounts();
 			accountOptions();
 			break;
 		case "2":
@@ -57,7 +56,7 @@ public class CustomerMenu implements MenuInterface{
 		}
 	}
 	
-	private void exit() {
+	public void exit() {
 		System.out.println("Closing in 5 seconds");
 		exit = true;
 		try {
@@ -72,13 +71,13 @@ public class CustomerMenu implements MenuInterface{
 	}
 	//options when you choose an account
 	private void accountOptions() {
+		viewAccounts();
 		String input = "";
 		System.out.println("Choose an option");
 		System.out.println("Make a deposit: type 1");
 		System.out.println("Make a withdraw: type 2");
 		System.out.println("To attempt a transfer: type 3");
 		System.out.println("To accept a transfer: type 4");
-		in.nextLine();
 		input = in.nextLine();
 		switch(input) {
 		case "1":
@@ -86,8 +85,10 @@ public class CustomerMenu implements MenuInterface{
 			break;
 		case "2":
 			makeAWithdraw(displayAccountWithNumberOptions());
+			break;
 		case "3":
 			postTransfer(displayAccountWithNumberOptions());
+			break;
 		case "4":
 			acceptTransfer(displayAccountWithNumberOptions());
 		case"Q":
@@ -97,8 +98,11 @@ public class CustomerMenu implements MenuInterface{
 		
 	}
 	
+	//TEST
 	private void acceptTransfer(int index) {
 		// TODO Auto-generated method stub
+		if(index == -1)
+			return;
 		
 		ArrayList<Transfers> tranList = cus.getpending(index);
 		System.out.println(tranList);
@@ -110,9 +114,9 @@ public class CustomerMenu implements MenuInterface{
 		}
 		
 	}
-
+	//TEST
 	private void postTransfer(int index) {
-		if(cus.getAllMyAccounts().get(0) == null)
+		if(cus.getAllMyAccounts().get(0) == null ||index == -1)
 			return;
 		
 		if(index >= 0) {
@@ -129,20 +133,19 @@ public class CustomerMenu implements MenuInterface{
 
 	
 	private void makeADeposit(int index) {
-		if(cus.getAllMyAccounts().get(0) == null)
+		if(cus.getAllMyAccounts().get(0) == null ||index == -1)
 			return;
 		
 		if(index >= 0) {
 			double amount;
 			System.out.println("Enter amount to deposit");
 			amount = in.nextDouble();
-			in.nextLine();
 			System.out.println(cus.deposit(index, amount));
 			
 		}}
 	
 	private void makeAWithdraw(int index) {
-		if(cus.getAllMyAccounts().get(0) == null)
+		if(cus.getAllMyAccounts().get(0) == null ||index == -1)
 			return;
 		
 		if(index >= 0) {
@@ -158,21 +161,24 @@ public class CustomerMenu implements MenuInterface{
 	
 	private int displayAccountWithNumberOptions() {
 		List<Account> accList = cus.getAllMyAccounts();
+		int counter = -1;
 		int index;
 		Account acc;
 		System.out.println("Choose an account");
 		for(int i = 0; i<accList.size(); i++) {
 			acc = accList.get(i);
-			if(!acc.getState().equalsIgnoreCase("P"))
+			if(!acc.getState().equalsIgnoreCase("P")) {
+				counter++;
 				System.out.printf("Option: %d Account Number: %s Balance: %.02f Type: %s \n", i, acc.getAccNumber(), acc.getBalance(), acc.getAccType());
-		}
+		}}
 		try {
 			index = Integer.parseInt(in.nextLine());
-			if(index <= accList.size())
+			if(index < accList.size()  && counter >= index)
 				return index;
 		}catch (Exception e) {
 			System.out.println("Invalid Input");
 		}
+		System.out.println("Invalid Account Choice");
 		return -1;
 		
 	}
@@ -191,7 +197,6 @@ public class CustomerMenu implements MenuInterface{
 		double balance;
 		System.out.println("Enter what kind of account:");
 		System.out.println("C for Checking; S for Savings");
-		in.nextLine();
 		accType = in.nextLine();
 		System.out.println("Enter Starting balance");
 		balance = in.nextDouble();
@@ -202,6 +207,25 @@ public class CustomerMenu implements MenuInterface{
 			System.out.println("Failed request");
 		
 	}
+
+	
+	public  boolean shallContinue() {
+		boolean loop = true;
+		while(loop) {
+		System.out.println("Should we continue: Y/N");
+		switch(in.nextLine().toUpperCase()) {
+		case "Y":
+			loop = false;
+			return true;
+		case "N":
+			loop = false;
+			return false;
+		default:
+		System.out.println("Invalid Entry");
+		}	
+	}
+		return false;
+		}
+	}
 	
 	
-}

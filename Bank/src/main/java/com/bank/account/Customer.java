@@ -3,27 +3,33 @@ package com.bank.account;
 import java.util.*;
 
 import com.bank.DAO.CustomerDAO;
-import com.bank.JDBC.AccountConnect;
 
-public class Customer implements CustomerDAO{
+public class Customer{
 
 	
 	private int accId;
 	private List<Account> accList;
 	
-	private AccountConnect ac;
+	private CustomerDAO cus;
 
 	
 	public Customer() {
 		super();
 		this.accId = -1;
 		this.accList = new ArrayList<Account>();
-		ac = new AccountConnect();
+		cus = new CustomerDAO();
 		getAllMyAccounts();
 	}
+	//getter
+	public List<Account> getAccList(){
+		return this.accList;
+	}
 	
+	
+	//Purpose: To log in with user and password
+	//Return: Boolean depending on successful login or not
 	public boolean logIn(String user, String pass) {
-		accId = ac.logIn(user, pass);
+		accId = cus.logIn(user, pass);
 		if(accId== -1)
 			return false;
 		else
@@ -31,54 +37,53 @@ public class Customer implements CustomerDAO{
 		
 	}
 
+	//Purpose: To call the selected account withdraw
+	//Return: String telling of success or not
 	public String withdraw(int index, double amount) {
-		return accList.get(index).withdraw(amount, ac);
+		return accList.get(index).withdraw(amount, cus);
 	}
 	
+	//Purpose: To call the selected account deposit
+	//Return: String telling of success or not
 	public String deposit(int index, double amount) {
-		return accList.get(index).deposit(amount, ac);
+		return accList.get(index).deposit(amount, cus);
 	}
 	
-	public List<Account> getAccList(){
-		return this.accList;
-	}
-	
+	//Purpose: To get all accounts associated with this Customer (account ID: accId)
+	//Return: A list of accounts
 	public List<Account> getAllMyAccounts() {
-		// TODO Auto-generated method stub
-		if(accId != -1)
-			accList = ac.viewMyAccounts(accId);
-		return accList;
+			this.accList = cus.viewMyAccounts(accId);
+		return this.accList;
 		
 	}
 
+	//Purpose: To start an transfer with this account
+	//Return: True/False depending on execution, Or fail if the amount is greater than the balance
 	public boolean startTransfer(int index, String accNumber, double amount) {
-		// TODO Auto-generated method stub
 		Account acc = accList.get(index);
 		
 		if(amount> acc.getBalance())
 			return false;
 		
-		return acc.startTransfer(ac, accNumber, amount);
+		return acc.startTransfer(cus, accNumber, amount);
 		
 		
 		
 	}
 
+	//Purpose: To get Pending transfers associated with the selected account
+	//Return: A list of transfers
 	public ArrayList<Transfers>getpending(int index) {
 		// TODO Auto-generated method stub
-		return accList.get(index).getPendingTransfer(ac);
+		return accList.get(index).getPendingTransfer(cus);
 		
 	}
 	
-
-	public Account getAccountInfo(String accNumber) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
+	//Purpose: Create a new account associated with this accId(Account id)
+	//Return: True/False depending on if code executes
 	public boolean createNewAccount(double balance, String type) {
 		Account acc = new Account(accId, balance, type );
-		if(ac.newAccount(acc)) {
+		if(cus.newAccount(acc)) {
 			accList.add(acc);
 			return true;
 		}
@@ -86,20 +91,10 @@ public class Customer implements CustomerDAO{
 		
 	}
 
+	//Purpose: Create a new Customer Account
+	//Return: True/False if successful
 	public boolean createNewUser(String email, String password, String first, String last) {
 		
-		return ac.newUser(email, password, first, last);
-	}
-
-	@Override
-	public boolean startTransfer(String accNumber, double amount) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean requestTransfer(String accNumber, double amount) {
-		// TODO Auto-generated method stub
-		return false;
+		return cus.newUser(email, password, first, last);
 	}
 }

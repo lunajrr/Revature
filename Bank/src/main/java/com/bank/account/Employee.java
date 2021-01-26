@@ -2,37 +2,41 @@ package com.bank.account;
 
 import java.util.ArrayList;
 import com.bank.DAO.EmployeeAccountDAO;
-import com.bank.JDBC.AccountConnect;
 
-public class Employee extends Account implements EmployeeAccountDAO{
+public class Employee {
 	private int accId;
-	private AccountConnect ac;
+	private EmployeeAccountDAO eDAO;
 	private ArrayList<Account> accList;
 	private ArrayList<Account> cus;
 	
 	public Employee() {
-		this.ac = new AccountConnect();
+		this.eDAO = new EmployeeAccountDAO();
 	}
 
+	//Purpose: Get all accounts in the database
+	//Return: A list of accounts
 	public ArrayList<Account> getAllAccounts() {
-		// TODO Auto-generated method stub
-		
-		this.accList =ac.getAllAccounts();
+		this.accList =eDAO.getAllAccounts();
 		return accList;
 	}
 
+	//Purpose: To log in
+	//Return: True if the user/pass is valid and is an employee; False if it fails either case
 	public boolean logIn(String user, String pass) {
-		accId = ac.logIn(user, pass);
-		if(accId== -1)
+		accId = eDAO.logIn(user, pass);
+		if(accId== -1) {
 			return false;
-		else
-			return true;
-		
+		}
+		else if(eDAO.checkEmployeeLogIn(user)) {
+			return true;}
+		return false;	
 	}
 	
+	//Purpose: To get all accounts that have the pending state in the database
+	//Return: A list of pending accounts
 	public ArrayList<Account> getAllPendingAccounts() {
 		// TODO Auto-generated method stub
-		getAllAccounts();
+		ArrayList<Account> accList = getAllAccounts();;
 		ArrayList<Account> pendingAcc = new ArrayList<Account>();
 		for(int i = 0; i<accList.size(); i++) {
 			if(accList.get(i).getState().equalsIgnoreCase("P"))
@@ -40,38 +44,30 @@ public class Employee extends Account implements EmployeeAccountDAO{
 		}
 		return pendingAcc;
 	}
-	
-	public boolean decideTransfer(int index,String decision) {
-
+	 
+	//Purpose: To allow the employee to decide to approve or deny an account
+	//Return: True if the query executes; else false
+	public boolean decideAccount(int index,String decision, ArrayList<Account> pendingList) {
+		
+		if(decision.equals("A") || decision.equals("D"))
+			if(index >= 0 && index< pendingList.size()) 
+				return eDAO.decideAccount(pendingList.get(index), decision);
+		
 			return false;
 			
 	}
 
+	//Purpose: to get all transactions in the database
+	//Return: A list of transactions
 	public ArrayList<Transaction> getAllTransactions() {
-		// TODO Auto-generated method stub
-		
-		
-		return ac.getAllTransactions();
+
+		return eDAO.getAllTransactions();
 	}
 
-	public Transaction searchTransaction(String accNumber) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Account searchAccount(String accNumber) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ArrayList<Transaction> getAllPendingTransactions() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
+	//Purpose: To get all the accounts associated with an email
+	//Return: A list of accounts
 	public ArrayList<Account> searchViaEmail(String email) {
-		cus = ac.searchUserViaEmail(email);
-		return cus;
+		this.cus = eDAO.searchUserViaEmail(email);
+		return this.cus;
 }}
 

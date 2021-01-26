@@ -1,13 +1,11 @@
 package com.bank.account;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
-import com.bank.DAO.AccountDAO;
-import com.bank.JDBC.AccountConnect;
+import com.bank.DAO.CustomerDAO;
 
-public class Account implements AccountDAO {
+public class Account  {
 	private int accountID;
 	private String accNumber;
 	private double balance = 0;
@@ -21,7 +19,7 @@ public class Account implements AccountDAO {
 	public Account(int accID, double balance, String accType) {
 		super();
 		
-		//create a random account number
+		//create a random account number (Better Option: Auto increment in database)
 		Random rnd = new Random();
 		int firstHalf = rnd.nextInt(9999999);
 		int secondHalf = rnd.nextInt(999999);
@@ -68,32 +66,7 @@ public class Account implements AccountDAO {
 		return String.format( "User ID: %d  Account Number: %s  Account Balance: $%.2f  Account Type: %s Account Status: %s",accountID, accNumber, balance, type, pending);
 	}
 
-	public String deposit(double amount, AccountConnect ac) {
-		
-		if(amount > 0) {
-			if(ac.deposit(accNumber, amount))
-				this.balanceUpdate(ac);
-				return "Deposit Successful";}
-		else if(amount <=0)
-			return "Deposit Failed, Invalid Amount";
-		
-		return "Deposit Failed";
-	}
-	
-	public String withdraw(double amount, AccountConnect ac) {
-		if(amount > 0 && amount < balance) {
-			if(ac.withdraw(accNumber, amount)) {
-				this.balanceUpdate(ac);
-				return "Withdraw successful";
-			}}
-		else if(amount < 0) {
-			return "Invalid Amount";
-		}
-		else if(amount>balance) 
-			return "Balance too low";
-		return "Withdraw failed";
-	}	
-	 
+	//Getters
 	public String getAccNumber() {
 		return accNumber;
 	}
@@ -119,36 +92,72 @@ public class Account implements AccountDAO {
 	public double getBalance() {
 		return balance;
 	}
-	//update the balance
+	
+	//Purpose: To Deposit the amount
+	//Return: A String: Successful or failed depending on invalid amount
+	public String deposit(double amount, CustomerDAO cDAO) {
+		
+		if(amount > 0) {
+			if(cDAO.deposit(accNumber, amount))
+				this.balanceUpdate(cDAO);
+				return "Deposit Successful";}
+		else if(amount <=0)
+			return "Deposit Failed, Invalid Amount";
+		
+		return "Deposit Failed";
+	}
+	
+	//Purpose: To withdraw the amount from the account
+	//Return: A string: Successful or failed depending on the cause
+	public String withdraw(double amount, CustomerDAO cDAO) {
+		if(amount > 0 && amount < balance) {
+			if(cDAO.withdraw(accNumber, amount)) {
+				this.balanceUpdate(cDAO);
+				return "Withdraw successful";
+			}}
+		else if(amount < 0) {
+			return "Invalid Amount";
+		}
+		else if(amount>balance) 
+			return "Balance too low";
+		return "Withdraw failed";
+	}	
+	 
 
-	private void balanceUpdate(AccountConnect ac) {
-		double newBalance = ac.getBalance(this.accNumber);
+	//Purpose: To update this balance via getting balance from server
+	private void balanceUpdate(CustomerDAO cDAO) {
+		double newBalance = cDAO.getBalance(this.accNumber);
 		if (newBalance >=0) {
 			this.balance = newBalance;
 		}
 	}
 
 
-	public boolean startTransfer(AccountConnect ac, String accNumber, double amount) {
+	//Purpose: to start a transfer from this account
+	//Return: A boolean depending on successful execution or not. (or amount is too high for the balance)
+	public boolean startTransfer(CustomerDAO cDAO, String accNumber, double amount) {
 		
 		if(amount> this.balance) {
 			System.out.println("Balance can't be negative; Transfer request denied");
 			return false;
 		}
-		return ac.startTransfer(this, accNumber, amount);	
+		return cDAO.startTransfer(this, accNumber, amount);	
 		
 	}
 
-
-	public ArrayList<Transfers> getTransfers(AccountConnect ac) {
-		this.tranList = ac.getTransfer(this);
+	//Purpose: to get all transfers this account is associated with.
+	//Return: A list of transfers
+	public ArrayList<Transfers> getTransfers(CustomerDAO cDAO) {
+		this.tranList = cDAO.getTransfer(this);
 		return this.tranList;
 	}
 	
-	public ArrayList<Transfers> getPendingTransfer(AccountConnect ac){
+	//Purpose: To get all transfers that are waiting for approval from this account
+	//Return: A list of transfers that are pending	
+	public ArrayList<Transfers> getPendingTransfer(CustomerDAO cDAO){
 		
 		Transfers tran = null;
-		ArrayList<Transfers> pendTran = this.getTransfers(ac);
+		ArrayList<Transfers> pendTran = this.getTransfers(cDAO);
 		System.out.println(tranList);
 		if(tranList != null) {
 			for(int i = 0; i < tranList.size(); i++)
@@ -161,11 +170,6 @@ public class Account implements AccountDAO {
 		
 	}
 	
-	public boolean logIn(String email, String password) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 
 
 

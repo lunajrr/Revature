@@ -4,5 +4,10 @@ public interface MenuInterface {
 
 	
 	public void displayOptions();
-	abstract void checkOptions(String input);
+	
+	public boolean shallContinue();
+	
+	public void exit();
+	
+
 }
