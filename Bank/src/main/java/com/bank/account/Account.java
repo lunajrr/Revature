@@ -158,7 +158,6 @@ public class Account  {
 		
 		Transfers tran = null;
 		ArrayList<Transfers> pendTran = this.getTransfers(cDAO);
-		System.out.println(tranList);
 		if(tranList != null) {
 			for(int i = 0; i < tranList.size(); i++)
 				tran = tranList.get(i);

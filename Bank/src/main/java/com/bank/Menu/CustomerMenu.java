@@ -43,11 +43,13 @@ public class CustomerMenu implements MenuInterface{
 			createNewAccount();
 			break;
 		case "B":
+			cus.closeResources();
 			exit = true;
 			break;
 		case "H":
 			break;
 		case "Q":
+			cus.closeResources();
 			exit = true;
 			exit();
 			break;	
@@ -55,7 +57,7 @@ public class CustomerMenu implements MenuInterface{
 			System.out.println("Error: Incorrect Option Choice");
 		}
 	}
-	
+
 	public void exit() {
 		System.out.println("Closing in 5 seconds");
 		exit = true;
@@ -78,7 +80,9 @@ public class CustomerMenu implements MenuInterface{
 		System.out.println("Make a withdraw: type 2");
 		System.out.println("To attempt a transfer: type 3");
 		System.out.println("To accept a transfer: type 4");
-		input = in.nextLine();
+		System.out.println("To go back: type B");
+		System.out.println("To Quit: type Q");
+		input = in.nextLine().toUpperCase();
 		switch(input) {
 		case "1":
 			makeADeposit(displayAccountWithNumberOptions());
@@ -91,8 +95,18 @@ public class CustomerMenu implements MenuInterface{
 			break;
 		case "4":
 			acceptTransfer(displayAccountWithNumberOptions());
-		case"Q":
+		case "B": 
 			break;
+		case"Q":
+			exit();
+			break;
+		case "H":
+			accountOptions();
+			break;
+		default:
+			System.out.println("Invalid Input");
+			if(shallContinue());
+				accountOptions();
 			
 		}
 		
@@ -103,17 +117,67 @@ public class CustomerMenu implements MenuInterface{
 		// TODO Auto-generated method stub
 		if(index == -1)
 			return;
-		
+		int option = -1;
 		ArrayList<Transfers> tranList = cus.getpending(index);
-		System.out.println(tranList);
-		if(tranList != null)
-			if(index >= 0) {
-			for(int i = 0; i<tranList.size(); i++) {
-				System.out.println("Option: " +i + "  "+tranList.get(i));
+
+			do {
+				if(tranList.size() != 0) {
+				if(index >= 0) {
+				for(int i = 0; i<tranList.size(); i++) {
+					System.out.println("Option: " +i + "  "+tranList.get(i));
+				}}}
+				else {
+					System.out.println("No pending Transfers");
+					return;
+				}
+				System.out.println("Choose an option to approve/deny");
+
+				try { option = in.nextInt();
+					if(option < 0 || option > tranList.size()-1) {
+						System.out.println("Invalid entry");
+						in.nextLine();
+						if(!shallContinue())
+							return;
+					}
+				}
+				catch(Exception e) {
+					System.out.println("Invalid entry");
+					if(!shallContinue())
+						return;
+				}
+			}while(option <0 || option > tranList.size()-1 );
+			approveDeny(tranList, option);
+	}
+			
+			
+			
+			
+			public void approveDeny(ArrayList<Transfers> tranList, int option) {
+			in.nextLine();
+			boolean loop= true;
+			String decision = "";
+			while(loop) {
+				System.out.println();
+				System.out.println("To Approve: Type A");
+				System.out.println("To Deny: Type D");
+				decision = in.nextLine().toUpperCase();
+				if(decision.equals("A") || decision.equals("D")) {
+					loop = false;}
+				else{
+					System.out.println("Invalid Input");
+					if(!shallContinue())
+						return;
+				}
 			}
+			
+			if(cus.approveTransfer(tranList, option, decision))
+					System.out.println("Transfer updated");
+			else
+					System.out.println("Transfer update failed");
+			System.out.println();
 		}
 		
-	}
+
 	//TEST
 	private void postTransfer(int index) {
 		if(cus.getAllMyAccounts().get(0) == null ||index == -1)
@@ -122,9 +186,13 @@ public class CustomerMenu implements MenuInterface{
 		if(index >= 0) {
 			double amount;
 			String accNumber;
+			do {
 			System.out.println("Enter amount to Transfer");
 			amount = in.nextDouble();
 			in.nextLine();
+			if(amount<0)
+				System.out.println("Invalid amount");
+			} while(amount<0);
 			System.out.println("Enter the Account Number you want to transfer to");
 			accNumber = in.nextLine();
 			System.out.println(cus.startTransfer(index, accNumber, amount));
@@ -140,7 +208,11 @@ public class CustomerMenu implements MenuInterface{
 			double amount;
 			System.out.println("Enter amount to deposit");
 			amount = in.nextDouble();
+			in.nextLine();
+			if(amount > 0 )
 			System.out.println(cus.deposit(index, amount));
+			else if(amount<0)
+				System.out.println("Invalid amount: Needs to be postive");
 			
 		}}
 	
@@ -153,14 +225,19 @@ public class CustomerMenu implements MenuInterface{
 			System.out.println("Enter amount to withdraw");
 			amount = in.nextDouble();
 			in.nextLine();
-			System.out.println(cus.withdraw(index, amount));
+			if(amount > 0 && cus.getAllValidAccounts().get(index).getBalance() > amount)
+				System.out.println(cus.withdraw(index, amount));
+				else if(amount<0)
+					System.out.println("Invalid amount: Needs to be postive");
+				else
+					System.out.println("Invalid amount: Balance is too small");
 		}
 		
 	}
 	
 	
 	private int displayAccountWithNumberOptions() {
-		List<Account> accList = cus.getAllMyAccounts();
+		List<Account> accList = cus.getAllValidAccounts();
 		int counter = -1;
 		int index;
 		Account acc;
@@ -197,7 +274,17 @@ public class CustomerMenu implements MenuInterface{
 		double balance;
 		System.out.println("Enter what kind of account:");
 		System.out.println("C for Checking; S for Savings");
-		accType = in.nextLine();
+		accType = in.nextLine().toUpperCase();
+		if(!accType.equals("C") || !accType.equals("S")) {
+			System.out.println("Invalid input");
+			if(shallContinue()) {
+				createNewAccount();
+				return;
+			}
+			else
+				return;			
+		}
+			
 		System.out.println("Enter Starting balance");
 		balance = in.nextDouble();
 		in.nextLine();
@@ -210,6 +297,7 @@ public class CustomerMenu implements MenuInterface{
 
 	
 	public  boolean shallContinue() {
+		in.nextLine();
 		boolean loop = true;
 		while(loop) {
 		System.out.println("Should we continue: Y/N");

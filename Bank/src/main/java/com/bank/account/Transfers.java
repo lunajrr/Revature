@@ -6,7 +6,7 @@ public class Transfers {
 	String recievingAcc;
 	double amount;
 	String state;
-	public Transfers(int tid, String sendingAcc, String recievingAcc, double amount, String state) {
+	public Transfers(int tid, String recievingAcc, String sendingAcc , double amount, String state) {
 		super();
 		this.tid = tid;
 		this.sendingAcc = sendingAcc;
@@ -41,7 +41,7 @@ public class Transfers {
 			else if(state.equalsIgnoreCase("D"))
 			pending = "Denied";
 		
-		return "Sending from: " + sendingAcc + " to " + recievingAcc + "; amount is: " + amount
+		return "Transfer ID: " + tid + "  Sending from: " + sendingAcc + " to " + recievingAcc + "; amount is: " + amount
 				+ " state=" + pending;
 	}
 	

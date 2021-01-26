@@ -23,6 +23,15 @@ public class EmployeeAccountDAO extends AccountConnect{
 			e.printStackTrace();
 		}
 	}
+	
+	public void closeResources() {
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	//Purpose: To retrieve all accounts associated with an email
 	//Returns: A Array List of accounts associated to email

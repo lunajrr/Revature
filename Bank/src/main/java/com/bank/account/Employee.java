@@ -69,5 +69,9 @@ public class Employee {
 	public ArrayList<Account> searchViaEmail(String email) {
 		this.cus = eDAO.searchUserViaEmail(email);
 		return this.cus;
-}}
+}
+	public void closeResources() {
+		eDAO.closeResources();
+	}
+	}
 

@@ -24,6 +24,15 @@ public class CustomerDAO extends AccountConnect{
 			e.printStackTrace();
 		}
 	}
+	
+	public void closeResources() {
+		try {
+			if(!conn.isClosed())
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 	//Purpose: To Create a new User by setting up log in info
 	//Returns: True if code executes correctly. False if code comes across and exception

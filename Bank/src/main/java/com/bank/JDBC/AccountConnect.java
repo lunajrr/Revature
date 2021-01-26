@@ -86,16 +86,11 @@ public class AccountConnect {
 		}
 		return -1;
 	}
-	
-		
-
-	
-		
-	
+			
 
 	public boolean decideTransfer(Transfers trans, String decision) {
 		try {
-			PreparedStatement stmt = conn.prepareStatement("update tranfsers set state = ? where tid = ?");
+			PreparedStatement stmt = conn.prepareStatement("update transfers set state = ? where tid = ?");
 			stmt.setString(1, decision);
 			stmt.setInt(2, trans.getTid());
 			stmt.execute();

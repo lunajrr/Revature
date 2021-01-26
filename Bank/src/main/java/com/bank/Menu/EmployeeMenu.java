@@ -42,6 +42,7 @@ public class EmployeeMenu implements MenuInterface{
 			viewAllAccounts();
 			break;
 		case "B":
+			em.closeResources();
 			exit =true;
 			break;
 		case "Q":
@@ -160,6 +161,7 @@ public class EmployeeMenu implements MenuInterface{
 			}
 		
 	public void exit() {
+		em.closeResources();
 		System.out.println("Closing in 5 seconds");
 		try {
 			Thread.sleep(5000);
