@@ -21,7 +21,7 @@ public class Customer{
 		this.tempList = new ArrayList<Account>();
 		cus = new CustomerDAO();
 		getAllMyAccounts();
-		LOGGER.info("Inside Constructor of Student Class");
+		LOGGER.info("Inside Constructor of Customer Constructor");
 	}
 	//getter
 	public List<Account> getAccList(){
@@ -87,10 +87,11 @@ public class Customer{
 		
 		ArrayList<Transfers> transList = accList.get(index).getPendingTransfer(cus);
 		ArrayList<Transfers> tempList = new ArrayList<Transfers>();
-		for(int i = 0; i< transList.size(); i++)
-			if(transList.get(i).getRecievingAcc().equalsIgnoreCase(this.tempList.get(index).getAccNumber())) {
-				tempList.add(transList.get(index));}
-		
+		System.out.println(accList.get(index));
+		for(int i = 0; i< transList.size(); i++) {
+			if(transList.get(i).getRecievingAcc().equalsIgnoreCase(accList.get(index).getAccNumber()) && transList.get(i).getState().equalsIgnoreCase("P")) { 
+				System.out.println("Got here");
+				tempList.add(transList.get(i));}}
 		return tempList;
 		
 	}

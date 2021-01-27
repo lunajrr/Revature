@@ -3,6 +3,7 @@ package com.bank.DAO;
 import java.sql.*;
 import java.util.*;
 
+import com.bank.Menus.BankStart;
 import com.bank.account.Account;
 import com.bank.account.Transfers;
 
@@ -11,6 +12,7 @@ public class AccountConnect {
 	private Connection conn;
 	
 	public AccountConnect() {	
+		BankStart.LOGGER.info("INSTANCE ID: " + BankStart.instanceID + " || AccountConnect constructor");
 		try {
 		this.conn = DriverManager.getConnection("jdbc:postgresql://localhost/bank", "postgres", "a");
 		}
@@ -19,12 +21,22 @@ public class AccountConnect {
 		}
 	}
 	
+	public void close() {
+		BankStart.LOGGER.info("INSTANCE ID: " + BankStart.instanceID + " || AccountConnect.close()");
+		try {
+			this.conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	
 	
 	//Purpose: To log in with email/password
 	//Return: The accountID
 	public int logIn(String email, String password) {
-		
+		BankStart.LOGGER.info("INSTANCE ID: " + BankStart.instanceID + " || AccountConnect.logIn() with: " +email+".");
 		try {
 			PreparedStatement  stmt = conn.prepareStatement("select * from log_info where email = ? and password = ?");
 			stmt.setString(1, email);
@@ -35,7 +47,7 @@ public class AccountConnect {
 				return resSet.getInt(1);	
 			}
 			}catch(SQLException e){
-				
+				BankStart.LOGGER.error("INSTANCE ID: " + BankStart.instanceID + " || AccountConnect.logIn() with: " +email+".");
 				return -1;	}
 		return -1;
 	}
@@ -45,6 +57,7 @@ public class AccountConnect {
 
 	public ArrayList<Transfers> getTransfer(Account acc){
 		ArrayList<Transfers> tranList = new ArrayList<Transfers>();
+		BankStart.LOGGER.info("INSTANCE ID: " + BankStart.instanceID + " || AccountConnect.getTransefer() with: " +acc+".");
 		try {
 			PreparedStatement stmt = conn.prepareStatement("select * from transfers where send_acc = ? or rec_acc = ?");
 			stmt.setString(1, acc.getAccNumber());
@@ -57,34 +70,17 @@ public class AccountConnect {
 			return tranList;
 			}
 			catch(SQLException e) {
-				
+				BankStart.LOGGER.error("INSTANCE ID: " + BankStart.instanceID + " || AccountConnect.getTransefer() with: " +acc+".");
 				System.out.println("Failed getting Transfer");
 			}
 		
 		return tranList;
 		
 	}
-	
-	public double getBalance(String accNumber) {
-		
-		try {
-			PreparedStatement stmt = conn.prepareStatement("select balance from accounts where account_number = ?");
-			stmt.setString(1, accNumber);
-			ResultSet rs = stmt.executeQuery();
-			
-			rs.next();
-			return rs.getDouble(1);
-			
-		}catch(SQLException e){
-			
-			System.out.println("Erorr: getBalance: Can't get balance");
-			
-		}
-		return -1;
-	}
 			
 
 	public boolean decideTransfer(Transfers trans, String decision) {
+		BankStart.LOGGER.info("INSTANCE ID: " + BankStart.instanceID + " || AccountConnect.decideTransfer() with: " +trans+" "+ decision+".");
 		try {
 			PreparedStatement stmt = conn.prepareStatement("update transfers set state = ? where tid = ?");
 			stmt.setString(1, decision);
@@ -93,7 +89,7 @@ public class AccountConnect {
 			return true;
 			}
 			catch(SQLException e) {
-				
+				BankStart.LOGGER.error("INSTANCE ID: " + BankStart.instanceID + " || AccountConnect.decideTransfer() with: " +trans+" "+ decision+".");
 				System.out.println("Failed getting Transfer");
 			}
 		

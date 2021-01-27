@@ -40,10 +40,7 @@ public class Transfers {
 			pending = "Approve";
 			else if(state.equalsIgnoreCase("D"))
 			pending = "Denied";
-		
-		return "Transfer ID: " + tid + "  Sending from: " + sendingAcc + " to " + recievingAcc + "; amount is: " + amount
-				+ " state=" + pending;
-	}
+		return String.format( "Transfer ID: %d     Sending from: %s  to  %    amount: $%.2f    state:  %s",tid, sendingAcc, recievingAcc, amount, pending);}
 	
 	
 	

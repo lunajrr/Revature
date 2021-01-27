@@ -6,6 +6,8 @@ import com.bank.account.Account;
 import com.bank.account.Customer;
 import com.bank.account.Transfers;
 
+
+
 public class CustomerMenu implements MenuInterface{
 	private Customer cus;
 	private boolean exit;
@@ -123,11 +125,10 @@ public class CustomerMenu implements MenuInterface{
 		ArrayList<Transfers> tranList = cus.getpending(index);
 
 			do {
-				if(tranList.size() != 0) {
-				if(index >= 0) {
+				if(index >= 0 && tranList.size() != 0) {
 				for(int i = 0; i<tranList.size(); i++) {
 					System.out.println("Option: " +i + "  "+tranList.get(i));
-				}}}
+				}}
 				else {
 					System.out.println("No pending Transfers");
 					return;

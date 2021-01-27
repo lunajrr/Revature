@@ -163,16 +163,14 @@ public class Account  {
 	//Return: A list of transfers that are pending	
 	public ArrayList<Transfers> getPendingTransfer(CustomerDAO cDAO){
 		
-		Transfers tran = null;
+		ArrayList<Transfers> tempTran = new ArrayList<Transfers>();
 		ArrayList<Transfers> pendTran = this.getTransfers(cDAO);
 		if(tranList != null) {
 			for(int i = 0; i < tranList.size(); i++)
-				tran = tranList.get(i);
-				if(tran.getRecievingAcc().equals(this.accNumber) && tran.getState().equalsIgnoreCase("P"))
-					pendTran.add(tran);
-				
+				if(pendTran.get(i).getRecievingAcc().equals(this.accNumber))
+					tempTran.add(pendTran.get(i));
 		}
-		return pendTran;
+		return tempTran;
 		
 	}
 	

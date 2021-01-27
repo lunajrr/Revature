@@ -14,6 +14,7 @@ public class EmployeeMenu implements MenuInterface{
 	EmployeeMenu(Employee em, Scanner in){
 		this.em = em;
 		this.in = in;
+		
 	}
 	
 	@Override
@@ -119,6 +120,11 @@ public class EmployeeMenu implements MenuInterface{
 		
 		System.out.println("Select an option");
 		int index = in.nextInt();
+		if(index > accList.size()-1 || index<0) {
+			System.out.println("Incorrect input: expect a valid number");
+			going = shallContinue();
+		}
+		else {
 		in.nextLine();
 		System.out.println("Type A to Approve; Type D to Deny");
 		String decision = in.nextLine().toUpperCase();
@@ -132,7 +138,7 @@ public class EmployeeMenu implements MenuInterface{
 			System.out.println("Incorrect Input: Expected Input: A or D");
 			System.out.println();
 			going = shallContinue();
-		}}
+		}}}
 		catch(Exception e) {
 			System.out.println("Oops, an exception happened at deciding to appove/deny an account.");
 			System.out.println();

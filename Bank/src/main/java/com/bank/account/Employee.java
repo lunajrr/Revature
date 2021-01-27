@@ -2,6 +2,7 @@ package com.bank.account;
 
 import java.util.ArrayList;
 import com.bank.DAO.EmployeeAccountDAO;
+import com.bank.Menus.BankStart;
 
 public class Employee {
 	private int accId;
@@ -11,6 +12,7 @@ public class Employee {
 	
 	public Employee() {
 		this.eDAO = new EmployeeAccountDAO();
+		BankStart.LOGGER.info("Inside Constructor of Employee Constructor");
 	}
 
 	//Purpose: Get all accounts in the database
@@ -70,6 +72,8 @@ public class Employee {
 		this.cus = eDAO.searchUserViaEmail(email);
 		return this.cus;
 }
+	
+	//Purpose close resources
 	public void closeResources() {
 		eDAO.closeResources();
 	}

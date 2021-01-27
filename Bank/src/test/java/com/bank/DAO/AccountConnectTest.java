@@ -28,9 +28,5 @@ public class AccountConnectTest {
 		assertNotNull("getTransfers Failed", ac.getTransfer(acc));
 	}
 
-	@Test
-	public void testGetBalance() {
-		assertNotNull("getBalance Failed" , ac.getBalance("2446413988608"));
-	}
 
 }
