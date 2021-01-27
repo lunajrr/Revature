@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import com.bank.JDBC.AccountConnect;
 import com.bank.account.Account;
 import com.bank.account.Transaction;
 
@@ -20,7 +19,7 @@ public class EmployeeAccountDAO extends AccountConnect{
 		try {
 			conn = DriverManager.getConnection("jdbc:postgresql://localhost/bank", "postgres", "a");
 		} catch (SQLException e) {
-			e.printStackTrace();
+			
 		}
 	}
 	
@@ -29,7 +28,7 @@ public class EmployeeAccountDAO extends AccountConnect{
 			conn.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
 		}
 	}
 
@@ -46,7 +45,7 @@ public class EmployeeAccountDAO extends AccountConnect{
 				accList.add(new Account(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getString(4), rs.getString(5)));
 			
 			}catch(SQLException e){
-				e.printStackTrace();
+				
 					}
 		return accList;
 			
@@ -63,7 +62,7 @@ public class EmployeeAccountDAO extends AccountConnect{
 				return resSet.getBoolean(1);	
 			}
 			}catch(SQLException e){
-				e.printStackTrace();
+				
 				return false;	}
 		return false;
 	}
@@ -80,7 +79,7 @@ public class EmployeeAccountDAO extends AccountConnect{
 			return true;
 			}
 			catch(SQLException e) {
-				e.printStackTrace();
+				
 				System.out.println("Failed Changing Account State");
 			}
 		
@@ -99,7 +98,7 @@ public class EmployeeAccountDAO extends AccountConnect{
 			}
 			return tranList;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			
 		}
 		return tranList;
 		
@@ -117,7 +116,7 @@ public class EmployeeAccountDAO extends AccountConnect{
 			}
 			return accList;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			
 		}
 		return accList;
 		

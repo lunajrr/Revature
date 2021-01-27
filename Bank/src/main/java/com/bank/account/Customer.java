@@ -1,7 +1,7 @@
 package com.bank.account;
 
 import java.util.*;
-
+import org.apache.logging.log4j.*;
 import com.bank.DAO.CustomerDAO;
 
 public class Customer{
@@ -10,8 +10,8 @@ public class Customer{
 	private int accId;
 	private ArrayList<Account> accList;
 	private ArrayList<Account> tempList;
-	
 	private CustomerDAO cus;
+	private static final Logger LOGGER = LogManager.getLogger(Customer.class.getName());
 
 	
 	public Customer() {
@@ -21,10 +21,14 @@ public class Customer{
 		this.tempList = new ArrayList<Account>();
 		cus = new CustomerDAO();
 		getAllMyAccounts();
+		LOGGER.info("Inside Constructor of Student Class");
 	}
 	//getter
 	public List<Account> getAccList(){
 		return this.accList;
+	}
+	public void setAccId(int accId) {
+		this.accId = accId;
 	}
 	
 	public void closeResources() {
@@ -108,6 +112,8 @@ public class Customer{
 	//Purpose: Create a new account associated with this accId(Account id)
 	//Return: True/False depending on if code executes
 	public boolean createNewAccount(double balance, String type) {
+		if(balance <0) 
+			return false;
 		Account acc = new Account(accId, balance, type );
 		if(cus.newAccount(acc)) {
 			accList.add(acc);

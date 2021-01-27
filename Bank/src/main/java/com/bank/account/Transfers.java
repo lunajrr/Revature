@@ -6,7 +6,7 @@ public class Transfers {
 	String recievingAcc;
 	double amount;
 	String state;
-	public Transfers(int tid, String recievingAcc, String sendingAcc , double amount, String state) {
+	public Transfers(int tid,  String sendingAcc , String recievingAcc, double amount, String state) {
 		super();
 		this.tid = tid;
 		this.sendingAcc = sendingAcc;

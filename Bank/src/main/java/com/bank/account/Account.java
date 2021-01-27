@@ -47,6 +47,9 @@ public class Account  {
 	public Account() {	
 	}
 
+	public String getAccTypeChar() {
+		return this.accType;
+	}
 	
 	@Override
 	public String toString() {
@@ -69,6 +72,10 @@ public class Account  {
 	//Getters
 	public String getAccNumber() {
 		return accNumber;
+	}
+	
+	public void setAccNumber(String accNumber) {
+		this.accNumber =accNumber;
 	}
 
 	public String getAccType() {

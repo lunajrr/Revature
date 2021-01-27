@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-import com.bank.JDBC.*;
 import com.bank.account.Account;
 import com.bank.account.Transfers;
 
@@ -21,7 +20,7 @@ public class CustomerDAO extends AccountConnect{
 		this.conn = DriverManager.getConnection("jdbc:postgresql://localhost/bank", "postgres", "a");
 		}
 		catch (SQLException e) {
-			e.printStackTrace();
+			
 		}
 	}
 	
@@ -30,7 +29,7 @@ public class CustomerDAO extends AccountConnect{
 			if(!conn.isClosed())
 			conn.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			
 		}
 	}
 
@@ -51,7 +50,7 @@ public class CustomerDAO extends AccountConnect{
 		return true;
 		
 		}catch(SQLException e){
-			e.printStackTrace();
+			
 			return false;	}
 	}
 	
@@ -66,7 +65,7 @@ public class CustomerDAO extends AccountConnect{
 		rs.next();
 		return rs.getBoolean(1);
 		}catch(SQLException e){
-			e.printStackTrace();
+			
 			return false;	}
 	}
 	
@@ -81,7 +80,7 @@ public class CustomerDAO extends AccountConnect{
 		resSet.next();
 		return resSet.getBoolean(1);
 		}catch(SQLException e){
-			e.printStackTrace();
+			
 			return false;	}
 		
 	}
@@ -98,7 +97,7 @@ public class CustomerDAO extends AccountConnect{
 			return rs.getDouble(1);
 			
 		}catch(SQLException e){
-			e.printStackTrace();
+			
 			System.out.println("Erorr: getBalance: Can't get balance");	
 		}
 		return -1;
@@ -120,7 +119,7 @@ public class CustomerDAO extends AccountConnect{
 		return accList;
 		
 		}catch(SQLException e){
-			e.printStackTrace();
+			
 			return null;}
 		
 	}
@@ -138,7 +137,7 @@ public class CustomerDAO extends AccountConnect{
 		return rs.getBoolean(1);
 		}
 		catch(SQLException e) {
-			e.printStackTrace();
+			
 			System.out.println("Failed posting Transfer");
 		}
 		
@@ -161,7 +160,7 @@ public class CustomerDAO extends AccountConnect{
 			return tranList;
 			}
 			catch(SQLException e) {
-				e.printStackTrace();
+				
 				System.out.println("Failed getting Transfer");
 			}
 		
@@ -177,12 +176,12 @@ public class CustomerDAO extends AccountConnect{
 		stmt.setInt(1, acc.getAccID());
 		stmt.setString(2, acc.getAccNumber());	
 		stmt.setDouble(3, acc.getBalance());
-		stmt.setString(4, acc.getAccType());
+		stmt.setString(4, acc.getAccTypeChar());
 		ResultSet rs = stmt.executeQuery();
 		rs.next();
 		return rs.getBoolean(1);
 		}catch(SQLException e){
-			e.printStackTrace();
+			System.out.println("User already exists");
 			return false;	
 			}
 	}
