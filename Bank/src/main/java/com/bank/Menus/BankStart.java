@@ -2,7 +2,6 @@ package com.bank.Menus;
 
 import java.util.Random;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -11,7 +10,8 @@ public class BankStart {
 	public static final Logger LOGGER = LogManager.getLogger(BankStart.class.getName());
 	
 	public static void main(String args[]) {
-		LOGGER.info("INSTANCE ID: " + instanceID + " || BankStart.main(): Started the program") ;
+		System.out.println();
+		System.out.println();
 		StartMenu sm = new StartMenu();
 		sm.displayOptions();
 		

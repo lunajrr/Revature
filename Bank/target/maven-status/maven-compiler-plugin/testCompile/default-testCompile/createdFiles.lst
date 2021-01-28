@@ -1,0 +1,5 @@
+com\bank\account\CustomerTest.class
+com\bank\DAO\CustomerDAOTest.class
+com\bank\account\EmployeeTest.class
+com\bank\DAO\AccountConnectTest.class
+com\bank\DAO\EmployeeAccountDAOTest.class

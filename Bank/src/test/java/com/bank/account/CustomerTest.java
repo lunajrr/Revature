@@ -18,25 +18,10 @@ public class CustomerTest {
 	public void testGetAllMyAccounts() {
 		assertNotNull("Can't get my Accounts", cus.getAllMyAccounts().get(0));
 	}
-
-
-
-	@Test
-	public void testGetpending() {
-		assertNotNull("Can't get pending transfers", cus.getpending(0));
-	}
-
-	
-
 	@Test
 	public void testCreateNewAccount() {
 		assertTrue("Couldn't create account", cus.createNewAccount(50, "C"));
 	}
 
-	@Test
-	public void testCreateNewUser() {
-		assertTrue("Couldn't create user", cus.createNewUser("email@email.com", "email", "email", "email"));
-		assertFalse("Could create a user with the same user", cus.createNewUser("email@email.com", "email", "email", "email"));
-	}
 
 }

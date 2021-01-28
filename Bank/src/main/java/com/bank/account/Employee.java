@@ -1,17 +1,18 @@
 package com.bank.account;
 
 import java.util.ArrayList;
-import com.bank.DAO.EmployeeAccountDAO;
+
+import com.bank.Connect.EmployeeConnect;
 import com.bank.Menus.BankStart;
 
 public class Employee {
 	private int accId;
-	private EmployeeAccountDAO eDAO;
+	private EmployeeConnect eDAO;
 	private ArrayList<Account> accList;
 	private ArrayList<Account> cus;
 	
 	public Employee() {
-		this.eDAO = new EmployeeAccountDAO();
+		this.eDAO = new EmployeeConnect();
 		BankStart.LOGGER.info("Inside Constructor of Employee Constructor");
 	}
 
@@ -26,16 +27,14 @@ public class Employee {
 	//Return: True if the user/pass is valid and is an employee; False if it fails either case
 	public boolean logIn(String user, String pass) {
 		accId = eDAO.logIn(user, pass);
-		if(accId== -1) {
+		if(accId== -1) 
 			return false;
-		}
-		else if(eDAO.checkEmployeeLogIn(user)) {
-			return true;}
-		return false;	
+		
+		return true;
 	}
 	
 	//Purpose: To get all accounts that have the pending state in the database
-	//Return: A list of pending accounts
+	//Return: A list on  f pending accounts
 	public ArrayList<Account> getAllPendingAccounts() {
 		// TODO Auto-generated method stub
 		ArrayList<Account> accList = getAllAccounts();;
@@ -73,7 +72,7 @@ public class Employee {
 		return this.cus;
 }
 	
-	//Purpose close resources
+	//Purpose: close resources
 	public void closeResources() {
 		eDAO.closeResources();
 	}

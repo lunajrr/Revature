@@ -5,14 +5,15 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.bank.Connect.EmployeeConnect;
 import com.bank.account.Account;
 
 public class EmployeeAccountDAOTest {
 
-	EmployeeAccountDAO em;
+	EmployeeConnect em;
 	@Before
 	public void setUp() throws Exception {
-		em = new EmployeeAccountDAO();
+		em = new EmployeeConnect();
 	}
 
 	@Test

@@ -20,24 +20,27 @@ public class CustomerMenu implements MenuInterface{
 		exit = false;		
 	}
 	
+	//Purpose: To display options
+	//Example: View all accounts, create a new account, go back to main menu, quit
 	public void displayOptions() {
-		String input = "";
-		while(!exit) {
-		System.out.println();
-		System.out.println("To view all acount's info and select an option: Type 1");
-		System.out.println("To create an new Account: Type 2");
-		System.out.println("To go back: Type B");
-		System.out.println("To Quit: Type Q");
-		System.out.println("For a list of Commands: Type H");
-
-			input = in.nextLine();
-			checkOptions(input);}
+		String input;
+		
+		while(!exit) {	
+			System.out.println();
+			System.out.println("To view all your accounts info and select an option: Type 1");
+			System.out.println("To create an new Account: Type 2");
+			System.out.println("To go back: Type B");
+			System.out.println("To Quit: Type Q");
+			System.out.println("For a list of Commands: Type H");
+			input = in.nextLine().toUpperCase();
+			checkOptions(input);
+			}
 		}
 			
-	//Check options(works as intended)
+	//Purpose: To check based on user input
 	public void checkOptions(String input) {
 		input=input.toUpperCase();
-		switch( input) {
+		switch(input) {
 		case "1":
 			accountOptions();
 			break;
@@ -60,6 +63,7 @@ public class CustomerMenu implements MenuInterface{
 		}
 	}
 
+	//Purpose: To exit the program gracefully
 	public void exit() {
 		System.out.println("Closing in 5 seconds");
 		exit = true;
@@ -73,19 +77,20 @@ public class CustomerMenu implements MenuInterface{
 		System.exit(0);
 		}
 	}
-	//options when you choose an account
+	
+	//Purpose: To display the options after viewing the accounts
 	private void accountOptions() {
 		if(viewAccounts() == -1) 
 			return;
 
 		String input = "";
-		System.out.println("Choose an option");
-		System.out.println("Make a deposit: type 1");
-		System.out.println("Make a withdraw: type 2");
+		System.out.println("To make a deposit: type 1");
+		System.out.println("To make a withdraw: type 2");
 		System.out.println("To attempt a transfer: type 3");
 		System.out.println("To accept a transfer: type 4");
 		System.out.println("To go back: type B");
 		System.out.println("To Quit: type Q");
+		System.out.println("Choose an option");
 		input = in.nextLine().toUpperCase();
 		switch(input) {
 		case "1":
@@ -116,7 +121,7 @@ public class CustomerMenu implements MenuInterface{
 		
 	}
 	
-	//TEST
+	//Purpose: To accept Transfers associated with an account
 	private void acceptTransfer(int index) {
 		// TODO Auto-generated method stub
 		if(index == -1)
@@ -135,6 +140,7 @@ public class CustomerMenu implements MenuInterface{
 				}
 				System.out.println("Choose an option to approve/deny");
 
+				
 				try { option = in.nextInt();
 					if(option < 0 || option > tranList.size()-1) {
 						System.out.println("Invalid entry");
@@ -151,10 +157,8 @@ public class CustomerMenu implements MenuInterface{
 			}while(option <0 || option > tranList.size()-1 );
 			approveDeny(tranList, option);
 	}
-			
-			
-			
-			
+				
+	//Purpose: To allow the customer to approve or deny an transfer
 	public void approveDeny(ArrayList<Transfers> tranList, int option) {
 			in.nextLine();
 			boolean loop= true;
@@ -180,29 +184,41 @@ public class CustomerMenu implements MenuInterface{
 			System.out.println();
 		}
 		
-
-	//TEST
+	//To allow the user to post a transfer
 	private void postTransfer(int index) {
-		if(cus.getAllMyAccounts().get(0) == null ||index == -1)
+		ArrayList<Account> accList = cus.getAllValidAccounts();
+		
+		if(accList.size()== 0 ||index == -1)
 			return;
 		
 		if(index >= 0) {
 			double amount;
 			String accNumber;
-			do {
-			System.out.println("Enter amount to Transfer");
-			amount = in.nextDouble();
-			in.nextLine();
-			if(amount<0)
-				System.out.println("Invalid amount");
-			} while(amount<0);
 			System.out.println("Enter the Account Number you want to transfer to");
 			accNumber = in.nextLine();
+			do {
+			System.out.println("Enter amount to Transfer");
+			
+			amount = tryParse(in.nextLine());
+			if(amount == -1)
+				if(shallContinue())
+					postTransfer(index);
+				else
+					return;
+			
+			if(amount<=0 )
+				System.out.println("Invalid amount: amount can't be 0 or less");
+			if(accList.get(index).getBalance()<amount)
+				System.out.println("Invalid amount: balance low");
+			} while(amount<0 || accList.get(index).getBalance()<amount);
+			
+
+			
 			System.out.println(cus.startTransfer(index, accNumber, amount));
 			
 		}}
 
-	
+	//Purpose: to allow the user to make a deposit
 	private void makeADeposit(int index) {
 		if(cus.getAllMyAccounts().get(0) == null ||index == -1)
 			return;
@@ -210,8 +226,14 @@ public class CustomerMenu implements MenuInterface{
 		if(index >= 0) {
 			double amount;
 			System.out.println("Enter amount to deposit");
-			amount = in.nextDouble();
-			in.nextLine();
+			
+			amount = tryParse(in.nextLine());	
+			if(amount == -1)
+				if(shallContinue())
+					makeADeposit(index);
+				else
+					return;
+			
 			if(amount > 0 )
 			System.out.println(cus.deposit(index, amount));
 			else if(amount<0)
@@ -219,15 +241,26 @@ public class CustomerMenu implements MenuInterface{
 			
 		}}
 	
+	//Purpose: to allow the user to withdraw money
 	private void makeAWithdraw(int index) {
+		//testing
 		if(cus.getAllMyAccounts().get(0) == null ||index == -1)
 			return;
+		
 		
 		if(index >= 0) {
 			double amount;
 			System.out.println("Enter amount to withdraw");
-			amount = in.nextDouble();
-			in.nextLine();
+		
+			//getting the values
+			amount = tryParse(in.nextLine());
+			
+			if(amount == -1)
+				if(shallContinue())
+					makeAWithdraw(index);
+				else
+					return;
+				
 			if(amount > 0 && cus.getAllValidAccounts().get(index).getBalance() > amount)
 				System.out.println(cus.withdraw(index, amount));
 				else if(amount<0)
@@ -238,37 +271,48 @@ public class CustomerMenu implements MenuInterface{
 		
 	}
 	
-	
+	//Purpose: to view all your accounts with option numbers
 	private int displayAccountWithNumberOptions() {
 		List<Account> accList = cus.getAllValidAccounts();
+		int counter = -1;
+		int index;
+		Account acc;
+		
+		System.out.println();
+		//Checks to see if there is any valid accounts
 		if(accList.size() == 0) {
 		System.out.println("No valid accounts");
 			return -1;
 		}
-		int counter = -1;
-		int index;
-		Account acc;
-		System.out.println("Choose an account");
+		
+		//Display accounts with options
+		
 		for(int i = 0; i<accList.size(); i++) {
 			acc = accList.get(i);
 			if(!acc.getState().equalsIgnoreCase("P")) {
 				counter++;
 				System.out.printf("Option: %d Account Number: %s Balance: %.02f Type: %s \n", i, acc.getAccNumber(), acc.getBalance(), acc.getAccType());
 		}}
-		try {
-			index = Integer.parseInt(in.nextLine());
-			if(index < accList.size()  && counter >= index)
-				return index;
-		}catch (Exception e) {
-			System.out.println("Invalid Input");
-		}
+		
+		System.out.println("Choose an account");
+		
+		//Get the input from the user
+		index = (int)tryParse(in.nextLine());
+		if(!(index < 0) && index < accList.size()  && counter >= index)
+			return index;
+		
+		//input problem; shall continue?
 		System.out.println("Invalid Account Choice");
-		return -1;
+		if(shallContinue())
+			return displayAccountWithNumberOptions();
+		else
+			return -1;
 		
 	}
 	
-	//view your accounts
+	//Purpose: to view all your accounts without option numbers
 	private int viewAccounts() {
+		System.out.println();
 		List<Account> accList = cus.getAllMyAccounts();
 		if(accList.size()==0) {
 			System.out.println("No valid accounts");
@@ -280,12 +324,14 @@ public class CustomerMenu implements MenuInterface{
 		return 1;
 	}
 	
-	//create a new account
+	//Purpose: To all the user to create an new pending account
 	private void createNewAccount() {
 		String accType;
 		double balance;
+		
+		//Getting Account Type (recursive restart);
 		System.out.println("Enter what kind of account:");
-		System.out.println("C for Checking; S for Savings");
+		System.out.println("C for Checking; S for Savings");	
 		accType = in.nextLine().toUpperCase();
 		if(accType.equals("C") || accType.equals("S")) 
 			System.out.println();
@@ -297,10 +343,24 @@ public class CustomerMenu implements MenuInterface{
 				else
 					return;			
 		}
-			
+		
+		//Getting Starting balance
+		while(true) {
 		System.out.println("Enter Starting balance");
-		balance = in.nextDouble();
-		in.nextLine();
+		balance = tryParse(in.nextLine());
+		
+		if(balance<0) {
+			if(balance==-1) 
+				System.out.println("Invalid input: Expected number");
+			else
+				System.out.println("Invalid starting balance");
+			if(!shallContinue())
+				return;
+		}
+		else
+			break;	
+		}
+		
 		
 		if(cus.createNewAccount(balance, accType))
 			System.out.println("Successful request");
@@ -308,10 +368,22 @@ public class CustomerMenu implements MenuInterface{
 			System.out.println("Failed request");
 		
 	}
-
 	
+	
+	
+	//To try to parse the input into a string
+	private double tryParse(String number) {
+		try {
+			return Double.parseDouble(number);
+		}
+		catch(NumberFormatException e) {
+			return -1;
+		}
+	}
+
+
+	//Purpose: To continue program when an issue has arrived
 	public  boolean shallContinue() {
-		in.nextLine();
 		boolean loop = true;
 		while(loop) {
 		System.out.println("Should we continue: Y/N");

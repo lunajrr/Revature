@@ -2,7 +2,7 @@ package com.bank.Menus;
 
 import java.util.*;
 
-
+import com.bank.Connect.AccountConnect;
 import com.bank.account.Customer;
 import com.bank.account.Employee;
 
@@ -10,33 +10,28 @@ public class StartMenu implements MenuInterface {
 	Scanner in = new Scanner(System.in);
 	boolean going = true;
 	
-	//display default options
+	//Purpose: To display all the default options
+	//EX: create new account, log in, exit, help
 	public void displayOptions() {
 		
 		String input;	
-		System.out.println("Welcome to Juan's Bank!");
+		System.out.println("Welcome to The First Bank of Juan!");
 		while(going) {
 		System.out.println();
 		System.out.println("What would you like to do?");
-		System.out.println("To create an Account: Type 1");
-		System.out.println("To log in as Customer: Type 2");
-		System.out.println("To log in as Employee: Type 3");
-		System.out.println("To Exit: Type Q");
-		System.out.println("For a list of Commands: Type H");
+		listCommands();
 		input = in.nextLine();
 		checkOptions(input);
 		}
 	}
 	
-	//check default options
-	public void checkOptions(String input) {
+	//Purpose: To validate commands from the default menu
+	private void checkOptions(String input) {
 		// TODO Auto-generated method stub
 		if(input.equalsIgnoreCase("1"))
 			createAccount();
 		else if(input.equalsIgnoreCase("2"))
-			customerlogIn();
-		else if(input.equalsIgnoreCase("3"))
-			employeelogIn();
+			logIn();
 		else if(input.equalsIgnoreCase("Q"))
 			exit();
 		else if(input.equalsIgnoreCase("H"))
@@ -47,7 +42,7 @@ public class StartMenu implements MenuInterface {
 		}
 	}
 		
-	//exit the app(works as planned)
+	//Purpose: To Exit the Program.
 	public void exit() {
 		System.out.println("Closing in 5 seconds");
 		in.close();
@@ -63,16 +58,15 @@ public class StartMenu implements MenuInterface {
 		}
 	}
 	
-	// List the help commands(works as planned)
+	// Purpose:To List Commands to the command prompt
 	private void listCommands() {
-		System.out.println("To create an Account: Type 1");
-		System.out.println("To log in as Customer: Type 2");
-		System.out.println("To log in as Employee: Type 3");
-		System.out.println("To Exit: Type Q");
-		System.out.println("For a list of Commands: Type H");
+		System.out.println("To Create an Account: Type 1");
+		System.out.println("To Log in: Type 2");
+		System.out.println("To QUIT: Type Q");
+		System.out.println("For HELP: Type H");
 	}
 	
-	//#############create Account
+	//Purpose: to allow the user to create an account
 	private void createAccount() {
 		String firstName;
 		String lastName;
@@ -84,17 +78,17 @@ public class StartMenu implements MenuInterface {
 		firstName = in.nextLine();
 		System.out.println("Enter your last name: ");
 		lastName = in.nextLine();
-		System.out.println("Enter your email : ");
+		System.out.println("Enter your email: ");
 		email = in.nextLine().toUpperCase();
 		System.out.println("Enter your password: ");
 		password = in.nextLine();
 		
 		Customer cus = new Customer();
 		if(cus.createNewUser(email, password, firstName, lastName)) {
-			System.out.println("New user Created");
+			System.out.println("New User Created");
 			whileLoop = false;}
 		else {
-			System.out.println("Failed to create a user");
+			System.out.println("Failed to Create a User");
 			System.out.println();
 			whileLoop = shallContinue();
 		}
@@ -102,14 +96,14 @@ public class StartMenu implements MenuInterface {
 		}
 	}
 	
-	//Employee login(still needs to check to see if it is an employee)
-	private void employeelogIn() {
-		Employee emp = new Employee();
-		Scanner in = new Scanner(System.in);
+	//factory design pattern
+	//Purpose: To log in with email/password: it decides if the user is a customer or employee based on email
+	private void logIn() {
+		
+		AccountConnect ac = new AccountConnect();
 		System.out.println("");
 		String username;
 		String password;
-		boolean logInSuccesful = false;
 		boolean whileLoop = true;
 		
 		while(whileLoop) {
@@ -117,55 +111,52 @@ public class StartMenu implements MenuInterface {
 		username = in.nextLine().toUpperCase();
 		System.out.println("Enter your password: ");
 		password = in.nextLine();
-		logInSuccesful = emp.logIn(username,  password);
-		if(logInSuccesful) {
-			whileLoop = false;
-			EmployeeMenu em = new EmployeeMenu(emp,in);
-			em.displayOptions();
+		if(ac.checkEmployeeLogIn(username)) {	
+			if(employeeLogIn(username, password)) {
+				return;}}
+		else if(customerLogIn(username, password)) 
+			return;
 		}
-		else {
-			System.out.println("Incorrect Email/Password");
-			System.out.println();
-			whileLoop = shallContinue();
-		}
+		ac.close();
+	}
 	
+	//Employee login(still needs to check to see if it is an employee)
+	private boolean employeeLogIn(String user, String password) {
+		Employee emp = new Employee();
+
+		if(!emp.logIn(user, password)) {
+			emp = null;
+			System.out.println("Couldn't log in as Employee");
+			return false;}
+		else
+		{
+			EmployeeMenu empM = new EmployeeMenu(emp, in);
+			empM.displayOptions();
+			return true;
 		}
 		
 	}
 	//get logIn info(works as planned)
-	private void customerlogIn() {
+	private boolean customerLogIn(String user, String password) {
 		
 		Customer cus = new Customer();
-		Scanner in = new Scanner(System.in);
-		System.out.println("");
-		String username;
-		String password;
-		boolean logInSuccesful = false;
-		boolean whileLoop = true;
 		
-		while(whileLoop) {
-		System.out.println("Enter your email: ");
-		username = in.nextLine().toUpperCase();
-		System.out.println("Enter your password: ");
-		password = in.nextLine();
-		logInSuccesful = cus.logIn(username,  password);
-		if(logInSuccesful) {
-			whileLoop = false;
-			CustomerMenu cm = new CustomerMenu(cus,in);
-			cm.displayOptions();
-		}
-		else{
-			System.out.println("Incorrect Email/Password");
-			System.out.println();
-			whileLoop = shallContinue();
-			
-		}	
+		if(!cus.logIn(user, password)){
+			cus = null;
+			System.out.println("Couldn't log in as Customer");
+			return false;}
+		else
+		{
+			CustomerMenu cusM = new CustomerMenu(cus, in);
+			cusM.displayOptions();
+			return true;
 		}
 		
 
 		
 	}
 
+	//Purpose: to decide if the user wants to keep trying after something happened
 	public boolean shallContinue() {
 		boolean loop = true;
 		while(loop) {

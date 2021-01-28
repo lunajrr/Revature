@@ -2,7 +2,8 @@ package com.bank.account;
 
 import java.util.*;
 import org.apache.logging.log4j.*;
-import com.bank.DAO.CustomerDAO;
+
+import com.bank.Connect.CustomerConnect;
 
 public class Customer{
 
@@ -10,7 +11,7 @@ public class Customer{
 	private int accId;
 	private ArrayList<Account> accList;
 	private ArrayList<Account> tempList;
-	private CustomerDAO cus;
+	private CustomerConnect cus;
 	private static final Logger LOGGER = LogManager.getLogger(Customer.class.getName());
 
 	
@@ -19,7 +20,7 @@ public class Customer{
 		this.accId = -1;
 		this.accList = new ArrayList<Account>();
 		this.tempList = new ArrayList<Account>();
-		cus = new CustomerDAO();
+		cus = new CustomerConnect();
 		getAllMyAccounts();
 		LOGGER.info("Inside Constructor of Customer Constructor");
 	}
@@ -60,7 +61,7 @@ public class Customer{
 	
 	//Purpose: To get all accounts associated with this Customer (account ID: accId)
 	//Return: A list of accounts
-	public List<Account> getAllMyAccounts() {
+	public ArrayList<Account> getAllMyAccounts() {
 			this.accList = cus.viewMyAccounts(accId);
 		return this.accList;
 		
@@ -87,11 +88,11 @@ public class Customer{
 		
 		ArrayList<Transfers> transList = accList.get(index).getPendingTransfer(cus);
 		ArrayList<Transfers> tempList = new ArrayList<Transfers>();
-		System.out.println(accList.get(index));
 		for(int i = 0; i< transList.size(); i++) {
 			if(transList.get(i).getRecievingAcc().equalsIgnoreCase(accList.get(index).getAccNumber()) && transList.get(i).getState().equalsIgnoreCase("P")) { 
-				System.out.println("Got here");
-				tempList.add(transList.get(i));}}
+				
+				tempList.add(transList.get(i));
+				}}
 		return tempList;
 		
 	}

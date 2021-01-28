@@ -5,15 +5,16 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.bank.Connect.CustomerConnect;
 import com.bank.account.Account;
 
 public class CustomerDAOTest {
 
-	private CustomerDAO cus;
+	private CustomerConnect cus;
 	
 	@Before
 	public void setUp() {
-		cus = new CustomerDAO();
+		cus = new CustomerConnect();
 	}
 
 	@Test
@@ -34,7 +35,7 @@ public class CustomerDAOTest {
 	@Test
 	public void testStartTransfer() {
 		Account acc =new Account();
-		acc.setAccNumber("5585445435867");
+		acc.setAccNumber("555445435867");
 		assertTrue("Can't Start Transfer", cus.startTransfer(acc, "2446413988608", 50));
 	}
 
